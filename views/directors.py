@@ -7,6 +7,10 @@ from service.decorators import auth_required, admin_required
 
 director_ns = Namespace('directors')
 
+"""
+Вьюха для режиссеров. Добавлено: методы  POST, PUT, DELETE, а так же декораторы для ограничения доступа 
+"""
+
 
 @director_ns.route('/')
 class DirectorsView(Resource):
@@ -19,7 +23,7 @@ class DirectorsView(Resource):
     @admin_required
     def post(self):
         data = request.json
-        return director_service.create(data), 201
+        return DirectorSchema().dump(director_service.create(data)), 201
 
 
 @director_ns.route('/<int:did>')
@@ -35,7 +39,8 @@ class DirectorView(Resource):
         data = request.json
         if not data.get('id') or (data.get('id') != did):
             data['id'] = did
-        return director_service.update(data), 200
+        director_service.update(data)
+        return "Complete", 200
 
     @admin_required
     def delete(self, did):

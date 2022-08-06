@@ -1,5 +1,8 @@
 from dao.model.director import Director
 
+"""
+Это код из репозитория Skypro, он работает как надо :)
+"""
 
 class DirectorDAO:
     def __init__(self, session):

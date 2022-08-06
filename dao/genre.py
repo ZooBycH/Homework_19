@@ -1,5 +1,8 @@
 from dao.model.genre import Genre
 
+"""
+Это код из репозитория Skypro, он работает как надо :)
+"""
 
 class GenreDAO:
     def __init__(self, session):

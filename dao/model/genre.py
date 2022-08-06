@@ -2,6 +2,9 @@ from marshmallow import Schema, fields
 
 from setup_db import db
 
+"""
+Это код из репозитория Skypro, он работает как надо :)
+"""
 
 class Genre(db.Model):
     __tablename__ = 'genre'

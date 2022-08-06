@@ -1,5 +1,8 @@
 from dao.model.movie import Movie
 
+"""
+Это код из репозитория Skypro, он работает как надо :)
+"""
 
 class MovieDAO:
     def __init__(self, session):

@@ -1,17 +1,22 @@
 import jwt
 from flask import request, current_app, abort
 
+"""
+Декораторы для ограничения доступа к эндпоинтам и доступа с правами администратора
+"""
+
 
 def auth_required(func):
     def wrapper(*args, **kwargs):
-        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer', "")
+        data = request.headers['Authorization']
+        token = data.split("Bearer ")[-1]
 
         if not token:
             raise abort(401)
 
         try:
             jwt.decode(token, key=current_app.config['SECRET_HERE'],
-                       algorithm=current_app.config['ALGORITHM'])
+                       algorithms=current_app.config['ALGORITHM'])
 
             return func(*args, **kwargs)
 
@@ -23,19 +28,24 @@ def auth_required(func):
 
 def admin_required(func):
     def wrapper(*args, **kwargs):
-        token = request.headers.environ.get('HTTP_AUTHORIZATION').replace('Bearer', "")
+        data = request.headers['Authorization']
+        token = data.split("Bearer ")[-1]
+        role = None
 
         if not token:
             raise abort(401)
 
         try:
             data = jwt.decode(token, key=current_app.config['SECRET_HERE'],
-                              algorithm=current_app.config['ALGORITHM'])
+                              algorithms=current_app.config['ALGORITHM'])
+            role = data.get("role")
 
-            if data['role'] == "admin":
-                return func(*args, **kwargs)
+        except Exception as e:
+            print("JWT Decode Exception", e)
 
-        except Exception:
-            raise Exception
+        if role != "admin":
+            abort(403)
 
-        return wrapper
+        return func(*args, **kwargs)
+
+    return wrapper

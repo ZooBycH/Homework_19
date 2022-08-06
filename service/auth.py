@@ -6,8 +6,12 @@ import hashlib
 import jwt
 from flask import current_app, abort
 
+"""
+Сервис для авторизации и генерации токенов
+"""
 
-def __generate_passwort_digest(password: str):
+
+def __generate_passwort_digest(password: str):  # генерируем хеш пароля
     return hashlib.pbkdf2_hmac(
         hash_name="sha256",
         password=password.encode('utf-8'),
@@ -16,15 +20,15 @@ def __generate_passwort_digest(password: str):
     )
 
 
-def generate_password_hash(password: str):
+def generate_password_hash(password: str):  # хеш -> строка
     return base64.b64encode(__generate_passwort_digest(password)).decode('utf-8')
 
 
-def compare_password_hash(password_hash, other_password) -> bool:
-    return password_hash == other_password
+def compare_password_hash(password_hash, other_password) -> bool:  # проверяет одинаковость хешей паролей
+    return password_hash == generate_password_hash(other_password)
 
 
-def generate_token(username, password_hash, password, role, is_refresh=False):
+def generate_token(username, password_hash, password, role, is_refresh=False):  # генерируем два вида токенов
     if username is None:
         raise abort(404)
 
@@ -57,7 +61,7 @@ def generate_token(username, password_hash, password, role, is_refresh=False):
 
 # Обновление токена
 def approve_token(refresh_token):
-    data = jwt.decode(refresh_token, key=current_app.config['SECRET_HERE'], algorithm=current_app.config['ALGORITHM'])
+    data = jwt.decode(refresh_token, key=current_app.config['SECRET_HERE'], algorithms=current_app.config['ALGORITHM'])
     username = data.get("username")
     password = data.get("password")
     role = data.get("role")
