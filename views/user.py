@@ -13,9 +13,16 @@ user_ns = Namespace('users')
 
 
 @user_ns.route('/')
-class UserView(Resource):
+class UserCreateView(Resource):
 
     def post(self):
         data = request.json
         user_service.create(data)
         return UserSchema().dump(data), 201
+
+
+@user_ns.route('/<un>')
+class UserView(Resource):
+    @admin_required
+    def delete(self, un):
+        return user_service.delete(un), 204

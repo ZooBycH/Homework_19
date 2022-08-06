@@ -24,8 +24,8 @@ class UserDAO:
         self.session.commit()
         return ent
 
-    def delete(self, uid):  # удаляем пользователя
-        user = self.get_one(uid)
+    def delete(self, un):  # удаляем пользователя
+        user = self.get_by_username(un)
         self.session.delete(user)
         self.session.commit()
 
